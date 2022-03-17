@@ -29,7 +29,6 @@ export function App() {
   const [Menu, setMenu] = useState([]);
   const [Panier, setPanier] = useState([]);
   const [ShowInscription, setShowInscription] = useState(false);
-  const [ShowConnexion, setShowConnexion] = useState(true);
 
   useEffect(() => {
     fetch("http://gelcs.fr/api/restaurant")
