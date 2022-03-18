@@ -12,9 +12,9 @@ import React, { useState, useEffect } from "react";
 import Card from "./components/Card.js";
 import Inscription from "./components/inscription";
 import Connexion from "./components/connexion.js";
-import { Provider } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./redux/store";
-import { addRestaurant } from "./redux/restaurantSlice.js";
+import { addRestaurant, chosenRestaurant } from "./redux/restaurantSlice.js";
 
 export default function Launcher() {
   return (
@@ -43,26 +43,26 @@ export function App() {
       .then((response) => {
         setRestaurants(response);
         response.map((data) => dispatch(addRestaurant(data.id_restaurant)));
-        console.log("state Restaurants : " + Restaurants);
       });
   }, []);
+
+  console.log(typeof restaurantID);
 
   const openModal = (infoMenu, restoId) => {
     setChosenRestoId(restoId);
     setModalVisible(true);
     setMenu(infoMenu);
+    console.log("Ceci est le l'id du restaurant dans openModal() : " + restoId); //*ok
   };
 
   const renderItem = ({ item }) => {
-    let menu = item.menu;
-    menu = JSON.parse(menu);
     return (
       <Card
         restoId={item.id_restaurant}
         name={item.name}
         address={item.address}
         score={item.score}
-        menu={menu}
+        menu={JSON.parse(item.menu)}
         openModal={openModal}
       />
     );
@@ -70,10 +70,34 @@ export function App() {
 
   const menuDisplay = Menu.map((dish, key) => {
     const AddToPanier = () => {
-      return datas.length != 0
-        ? setPanier([...Panier, dish.name])
-        : alert("Veuillez vous connecter");
+      console.log(
+        "Ceci est la taille du state général. Une fois le premier plat choisi, il doit passer à 1 : " +
+          restaurantID.length
+      ); //!erreur
+      console.log(
+        "Ceci est le type du state général restaurantID (résultat attendu : tableau/array): " +
+          typeof restaurantID
+      ); //!erreur
+      // Si la connexion est établie
+      if (datas.length != 0) {
+        // Si la commande a déjà été commencée dans un restaurant
+        if (restaurantID.length == 1) {
+          return restaurantID == ChosenRestoId
+            ? setPanier([...Panier, dish.name])
+            : alert("Veuillez commander dans le même restaurant");
+          // Si aucun restaurant n'a encore été choisi
+        } else if (restaurantID.length > 1) {
+          console.log(
+            "Ceci est la valeur du state général dans menuDisplay : " +
+              restaurantID
+          );
+          return dispatch(chosenRestaurant(ChosenRestoId)); //!Devrait retourner un tableau avec un seul indice et non 3
+        }
+      } else {
+        return alert("Veuillez vous connecter");
+      }
     };
+
     return (
       <Pressable key={key} onPress={AddToPanier}>
         <Text>{dish.name}</Text>
@@ -125,7 +149,11 @@ export function App() {
         </View>
       </Modal>
       <Text>Liste de restaurants</Text>
-      <FlatList data={Restaurants} renderItem={renderItem}></FlatList>
+      <FlatList
+        data={Restaurants}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id_restaurant}
+      />
       <Button title="Commander" onPress={sendOrder}></Button>
       <Button title="Test" onPress={() => console.log(Panier)}></Button>
       <StatusBar style="auto" />
