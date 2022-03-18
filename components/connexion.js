@@ -24,7 +24,7 @@ export default function connexion() {
       }),
     })
       .then((response) => response.json())
-      .then((response) => console.log(response))
+      .then((response) => dispatch(addData(response.response[0])))
       .catch((error) => console.log(error));
   };
 
@@ -43,7 +43,6 @@ export default function connexion() {
         value={Password}
       />
       <Button title="Valider" onPress={authentication} />
-      {/* <Button title="test" onPress={authentication} /> */}
     </View>
   );
 }
