@@ -33,14 +33,22 @@ export function App() {
   const [ChosenRestoId, setChosenRestoId] = useState(null);
 
   const datas = useSelector((state) => state.connexionData.value);
+  const restaurantID = useSelector((state) => state.restaurantID.value);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetch("http://gelcs.fr/api/restaurant")
       .then((response) => response.json())
-      .then((response) => setRestaurants(response));
+      .then((response) => {
+        setRestaurants(response);
+        response.map((data) => dispatch(addRestaurant(data.id_restaurant)));
+        console.log("state Restaurants : " + Restaurants);
+      });
   }, []);
 
-  const openModal = (infoMenu) => {
+  const openModal = (infoMenu, restoId) => {
+    setChosenRestoId(restoId);
     setModalVisible(true);
     setMenu(infoMenu);
   };
@@ -50,6 +58,7 @@ export function App() {
     menu = JSON.parse(menu);
     return (
       <Card
+        restoId={item.id_restaurant}
         name={item.name}
         address={item.address}
         score={item.score}

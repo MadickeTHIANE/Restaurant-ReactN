@@ -1,9 +1,16 @@
 import { StyleSheet, View, Text, Pressable } from "react-native";
 
-export default function Card({ name, address, score, menu, openModal }) {
+export default function Card({
+  restoId,
+  name,
+  address,
+  score,
+  menu,
+  openModal,
+}) {
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => openModal(menu)}>
+      <Pressable onPress={() => openModal(menu, restoId)}>
         <Text>{name}</Text>
       </Pressable>
       <Text>{address}</Text>
