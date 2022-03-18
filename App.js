@@ -29,6 +29,7 @@ export function App() {
   const [Menu, setMenu] = useState([]);
   const [Panier, setPanier] = useState([]);
   const [ShowInscription, setShowInscription] = useState(false);
+  const datas = useSelector((state) => state.connexionData.value);
 
   useEffect(() => {
     fetch("http://gelcs.fr/api/restaurant")
@@ -56,8 +57,13 @@ export function App() {
   };
 
   const menuDisplay = Menu.map((dish, key) => {
+    const AddToPanier = () => {
+      return datas.length != 0
+        ? setPanier([...Panier, dish.name])
+        : alert("Veuillez vous connecter");
+    };
     return (
-      <Pressable key={key} onPress={() => setPanier([...Panier, dish.name])}>
+      <Pressable key={key} onPress={AddToPanier}>
         <Text>{dish.name}</Text>
       </Pressable>
     );
