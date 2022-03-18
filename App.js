@@ -14,6 +14,7 @@ import Inscription from "./components/inscription";
 import Connexion from "./components/connexion.js";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { addRestaurant } from "./redux/restaurantSlice.js";
 
 export default function Launcher() {
   return (
@@ -29,6 +30,8 @@ export function App() {
   const [Menu, setMenu] = useState([]);
   const [Panier, setPanier] = useState([]);
   const [ShowInscription, setShowInscription] = useState(false);
+  const [ChosenRestoId, setChosenRestoId] = useState(null);
+
   const datas = useSelector((state) => state.connexionData.value);
 
   useEffect(() => {
